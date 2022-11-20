@@ -1,0 +1,18 @@
+program{
+    VaciarCelda()
+}
+
+procedure VaciarCelda(){
+    SacarTodasDeColor_(Rojo)
+    SacarTodasDeColor_(Negro)
+    SacarTodasDeColor_(Verde)
+    SacarTodasDeColor_(Azul)
+}
+
+procedure SacarTodasDeColor_(color)
+{
+    repeat (nroBolitas(color))
+    {
+        Sacar(color)
+    }
+}

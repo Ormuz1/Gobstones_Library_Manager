@@ -1,0 +1,34 @@
+program
+{
+    SacarCuadrado()
+}
+
+procedure SacarCuadrado()
+{
+    /*
+    Proposito: Saca un cuadrado multicolor de dos celdas de lado, tomando la celda
+    actual como la esquina inferior izquierda de dicho cuadrado.
+    Precondicion: Debe haber una celda al norte, este y noreste; dichas celdas
+    y la celda actual deben tambien tener una bolita de cada color.
+    */
+    SacarUnaDeCadaColor()
+    Mover(Este)
+    SacarUnaDeCadaColor()
+    Mover(Norte)
+    SacarUnaDeCadaColor()
+    Mover(Oeste)
+    SacarUnaDeCadaColor()
+    Mover(Sur)
+}
+
+procedure SacarUnaDeCadaColor()
+{
+    /*
+    Proposito: Saca una bolita de cada color de la celda actual.
+    Precondicion: Debe haber una bolita de cada color en la celda actual.
+    */
+    Sacar(Rojo)
+    Sacar(Azul)
+    Sacar(Verde)
+    Sacar(Negro)
+}

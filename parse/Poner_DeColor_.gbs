@@ -1,0 +1,4 @@
+procedure Poner_DeColor_(cantidadAPoner, colorAPoner)
+{
+    repeat(cantidadAPoner) { Poner(colorAPoner)}
+}

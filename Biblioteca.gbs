@@ -1,0 +1,9 @@
+procedure Poner_DeColor_(cantidadAPoner, colorAPoner)
+{
+    repeat(cantidadAPoner) { Poner(colorAPoner)}
+}
+
+procedure Mover_VecesAl_(cantidadAMover, direccionAMover)
+{
+    repeat (cantidadAMover) { Mover(direccionAMover)}
+}
