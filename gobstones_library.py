@@ -1,10 +1,8 @@
 """
     TODO:
-    3. Subir a github.
-    4. Validar mas las weas.
+    1. Implementar correctamente is_valid().
+    2. Hacer el codigo mas defensivo.
 """
-
-
 from re import split as re_split, search as re_search
 import json
 DEFAULT_LIBRARY_FILE_PATH = "biblioteca.json"
@@ -22,10 +20,10 @@ class GobstonesLibrary:
             self.functions = library["functions"]
 
         except ValueError as e:
-            raise Exception("Error: Invalid JSON code in library file.")
+            raise ValueError("Error: Invalid JSON code in library file.")
 
         except FileNotFoundError as e:
-            raise Exception("Error: Couldn't find library file.")
+            raise FileNotFoundError("Error: Couldn't find library file.")
 
 
     def add_from_file(self, filepath: str):

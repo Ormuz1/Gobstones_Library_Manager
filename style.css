@@ -1,0 +1,73 @@
+:root {
+    --thick-border: 2px solid #e0e0e0;
+    --thin-border: 1px solid #e0e0e0;
+}
+
+/* Borders */
+main > .row {
+    border: var(--thick-border);
+    border-bottom: 0;
+}
+
+main > :last-child {
+    border-bottom: var(--thick-border);
+}
+
+.row > .col {
+    border-right: var(--thick-border);
+}
+
+.row > :last-child {
+    border-right: none;
+}
+
+
+#contenedor-nombres-elementos{
+    padding: 0;
+}
+
+
+#contenedor-codigo {
+    padding-right: 0;
+}
+
+#contenedor-principal {
+    padding-top: 1rem;
+}
+
+
+
+.collection {
+    border: 0;
+    margin: 0;
+}
+
+#fila-encabezados {
+    margin-bottom: 0;
+}
+
+#contenedor-botones {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.library-elements-selector {
+    margin: none;
+}
+
+
+/* Materialize Tabs styles */
+.tabs {
+    height: 24px;
+    border-bottom: var(--thin-border);
+}
+
+.tabs .tab {
+    height: 24px;
+    line-height: 24px;
+}
+.tabs .tab a {
+    font-size: 10px;
+    padding: 0px 6px;
+
+}
