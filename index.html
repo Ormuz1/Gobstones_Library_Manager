@@ -16,19 +16,19 @@
 </head>
 
 <body>
-    <div class="container" id="contenedor-principal" style="padding-top:1rem;">
+    <div class="container" id="contenedor-principal">
         <h3 class="center-align blue-text">Administrador de biblioteca de Gobstones</h3>
         <main>
             <div class="row" id="fila-encabezados">
-                <header class="col s4">
+                <header class="col s5">
                     <h6 class="center-align">Elementos de la biblioteca</h6>
                 </header>
-                <header class="col s8">
+                <header class="col s7">
                     <h6 class="center-align">Codigo del elemento seleccionado</h6>
                 </header>
             </div>
-            <div class="row">
-                <div class="col s4" id="contenedor-nombres-elementos">
+            <div class="row" id="second-row">
+                <div class="col s5" id="contenedor-nombres-elementos">
                     <ul class="tabs" id="element-type-tabs">
                         <li class="tab col s3 active"><a href="#todos">Todos</a></li>
                         <li class="tab col s3"><a href="#types">Types</a></li>
@@ -36,31 +36,19 @@
                         <li class="tab col s3"><a href="#functions">Functions</a></li>
                     </ul>
                     <ul class="collection library-element-selector" id="todos">
-                        <a href="#" class="collection-item nombre-elemento">Alvin</a>
-                        <a href="#" class="collection-item nombre-elemento">Alvin1</a>
-                        <a href="#" class="collection-item nombre-elemento">Alvin2</a>
-                        <a href="#" class="collection-item nombre-elemento">Alvin3</a>
+
                     </ul>
                     <ul class="collection library-element-selector" id="types">
-                        <a href="#" class="collection-item nombre-elemento">Mark</a>
-                        <a href="#" class="collection-item nombre-elemento">Mark1</a>
-                        <a href="#" class="collection-item nombre-elemento">Mark2</a>
-                        <a href="#" class="collection-item nombre-elemento">Mark3</a>
+
                     </ul>
                     <ul class="collection library-element-selector" id="procedures">
-                        <a href="#" class="collection-item nombre-elemento">Mariano</a>
-                        <a href="#" class="collection-item nombre-elemento">Mariano1</a>
-                        <a href="#" class="collection-item nombre-elemento">Mariano2</a>
-                        <a href="#" class="collection-item nombre-elemento">Mariano3</a>
+
                     </ul>
                     <ul class="collection library-element-selector" id="functions">
-                        <a href="#" class="collection-item nombre-elemento">Function</a>
-                        <a href="#" class="collection-item nombre-elemento">Function1</a>
-                        <a href="#" class="collection-item nombre-elemento">Function2</a>
-                        <a href="#" class="collection-item nombre-elemento">Function3</a>
+
                     </ul>
                 </div>
-                <div class="col s8" id="contenedor-codigo">
+                <div class="col s7" id="contenedor-codigo">
                     <pre id="codigo">Aca va el codigo</pre>
                 </div>
             </div>

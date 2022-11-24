@@ -35,7 +35,28 @@ function get_library_elements(){
 
 
 const libraryElementSelectedEvent = new Event("LibraryElementSelected");
-document.addEventListener("LibraryElementSelected", () => {console.log("Library element selected")});
+// document.addEventListener("LibraryElementSelected", () => {console.log("Library element selected")});
+
+let all_library_elements = []
+for (const library_part in biblioteca)
+{
+    let library_part_node = document.getElementById(library_part);
+    console.log(library_part_node);
+    for (const element in biblioteca[library_part])
+    {
+        const node = document.createElement("a");
+        node.classList.add("collection-item", "nombre-elemento");
+        const text = document.createTextNode(library_part.slice(0, -1) + " " + element);
+        node.appendChild(text);
+        library_part_node.appendChild(node);
+        all_library_elements.push(node.cloneNode(true));
+    }
+}
+const todos = document.getElementById("todos");
+all_library_elements.forEach(element => {
+    todos.appendChild(element);
+});
+
 
 
 /* Initialize the library element selector.
@@ -49,7 +70,7 @@ for (tab of element_type_tabs.getElementsByClassName("tab"))
 {
     tab.addEventListener("click", function() {active_library_selector = get_active_library_selector() } );
 }
-const active_library_selector = get_active_library_selector();
+let active_library_selector = get_active_library_selector();
 const library_selectors = document.getElementsByClassName("library-element-selector");
 for (selector of library_selectors)
 {
@@ -58,7 +79,7 @@ for (selector of library_selectors)
         item.addEventListener("click", function (event) {
             let selected_element = get_selected_library_element(event.target.parentElement);
             document.dispatchEvent(libraryElementSelectedEvent);
-            codigo.innerText = event.target.innerText;
+            codigo.innerText = get_library_element(event.target.innerText.split(" ")[1]);
             if (selected_element !== null) selected_element.classList.remove("active");
             event.target.classList.add("active");
             selected_element = event.target;
@@ -82,6 +103,22 @@ function get_selected_library_element(selector)
     return search.length === 0 ? null : search[0];  
 }
 
+function get_library_element(element_name)
+{
+    for (i in biblioteca)
+    {
 
+        for (j in biblioteca[i])
+        {
+            console.log(j)
+            if (j === element_name)
+            {
+                console.log(j)
+                return biblioteca[i][j]
+            }
+        }
+    }
+    return null
+}
 // Initialize materialize framework elements.
 M.AutoInit();
