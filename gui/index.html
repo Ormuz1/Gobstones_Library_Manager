@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="style.css">
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <title>GobStones Library Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
     
 </head>
 
@@ -36,15 +37,24 @@
                         <li class="tab col s3"><a href="#functions">Functions</a></li>
                     </ul>
                     <ul class="collection library-element-selector" id="todos">
-
+                        
                     </ul>
                     <ul class="collection library-element-selector" id="types">
+                        <a onclick="show_library_entry(this)" class="collection-item nombre-elemento" v-for="i of types">
+                            Type {{i}}
+                        </a>
 
                     </ul>
                     <ul class="collection library-element-selector" id="procedures">
+                        <a onclick="show_library_entry(this)" class="collection-item nombre-elemento" v-for="i of procedures">
+                            Procedure {{i}}
+                        </a>
 
                     </ul>
                     <ul class="collection library-element-selector" id="functions">
+                        <a onclick="show_library_entry(this)" class="collection-item nombre-elemento" v-for="i of functions">
+                            Function {{i}}
+                        </a>
 
                     </ul>
                 </div>

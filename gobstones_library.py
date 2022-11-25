@@ -118,6 +118,11 @@ class GobstonesLibrary:
                 return True
         return False
     
+    def get_element(self, element_name:str) -> str:
+        for blocktype in GobstonesLibrary.__blocktypes():
+            for entry in getattr(self, blocktype):
+                if entry == element_name:
+                    return getattr(self, blocktype)[entry]
 
     @staticmethod
     def __blocktypes() -> tuple:
