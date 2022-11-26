@@ -1,11 +1,11 @@
 import eel 
 import gobstones_library as lib
-import os
 import tkinter as tk
 from tkinter import filedialog
 
 
 library_buffer = lib.GobstonesLibrary()
+
 @eel.expose
 def get_library_entry_names():
     return {

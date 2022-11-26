@@ -23,7 +23,16 @@ class GobstonesLibrary:
             raise ValueError("Error: Invalid JSON code in library file.")
 
         except FileNotFoundError as e:
-            raise FileNotFoundError("Error: Couldn't find library file.")
+            print("Couldn't find library file. Recreating library...")
+            lib = {
+                "types": {},
+                "procedures": {},
+                "functions": {}
+            }
+            with open(filepath, "w") as file:
+                json.dump(lib, file)
+            self.__init__(filepath)
+
 
 
     def add_from_file(self, filepath: str):

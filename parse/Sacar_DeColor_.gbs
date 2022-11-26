@@ -1,4 +1,0 @@
-procedure Sacar_DeColor_(cantidadASacar, colorASacar)
-{
-    repeat (cantidadASacar) { Sacar(colorASacar) }
-}

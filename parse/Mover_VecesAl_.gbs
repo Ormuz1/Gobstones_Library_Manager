@@ -1,4 +1,0 @@
-procedure Mover_VecesAl_(cantidadAMover, direccionAMover)
-{
-    repeat (cantidadAMover) { Mover(direccionAMover)}
-}
