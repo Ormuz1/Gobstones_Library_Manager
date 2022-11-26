@@ -3,6 +3,14 @@
     --thin-border: 1px solid #e0e0e0;
 }
 
+body, html {
+    margin: 0;
+    height: 100%;
+}
+
+input[type="file"] {
+    display: none;
+}
 /* Borders */
 main > .row {
     border: var(--thick-border);
@@ -32,11 +40,13 @@ main > :last-child {
 }
 
 #contenedor-principal {
-    padding-top: 1rem;
+    padding: 1rem 0;
+    width: 100%;
+    height: 100%;
 }
 
 .collection, #codigo {
-    height: 50vh;
+    height: 70vh;
     width: auto;
     overflow-y: auto;
 }
@@ -53,6 +63,7 @@ main > :last-child {
 .collection-item:hover {
     cursor: pointer;
 }
+
 #fila-encabezados {
     margin-bottom: 0;
 }
@@ -80,4 +91,17 @@ main > :last-child {
     font-size: 10px;
     padding: 0px 6px;
 
+}
+
+/* Alert styles */
+.alert .card-content span {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-right: 4px;
+}
+.alert .card-content .material-icons {
+    font-size: 1.5em;
+    position: relative;
+    top: 5px;
+    margin-right: 0.5em;
 }

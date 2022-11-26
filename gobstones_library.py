@@ -84,7 +84,12 @@ class GobstonesLibrary:
             library_file.write(json.dumps(library_contents, indent=4))
         return
     
-    
+    def export_to_gbs(self, filepath:str="Biblioteca.gbs"):
+        with open(filepath, "w", encoding='utf-8') as file:
+            for blocktype in GobstonesLibrary.__blocktypes():
+                for element in getattr(self, blocktype).values():
+                    file.write(element + "\n\n")
+        
     def is_valid(self) -> bool:
         """Returns whether this library is valid.
 
@@ -154,10 +159,9 @@ def parse_gobstones_file(filepath: str) -> dict:
     with open(filepath, "r", encoding='utf-8') as file:
         data = re_split(r"(type|function|procedure|program)", file.read())
 
-    # The re.split() function can add an empty item at the beginning which
+    # The re.split() function adds a wrong item at the beginning which
     # fucks everything up, so we have to remove it
-    if data[0] == "": 
-        data = data[1:]
+    data = data[1:]
     
     for i in range(0, len(data), 2):
         token = data[i]

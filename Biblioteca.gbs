@@ -1,9 +1,284 @@
-procedure Poner_DeColor_(cantidadAPoner, colorAPoner)
-{
-    repeat(cantidadAPoner) { Poner(colorAPoner)}
+type EmpresaDeBuses is record {
+/*
+ PROPÓSITO: Modela una empresa de buses.
+  INV.REP:
+  * El campo”rutaARealizar” de cualquier pasaje vendido en *pasajes* se corresponde
+    con algún número en el campo “rutaId” de alguna ruta en *rutas*.
+  * El campo “viajeAsignado” de cualquier pasaje vendido en *pasajes* se
+    corresponde con algún número en el campo”númeroDeViaje” de algún viaje en
+    *viajes*.
+  * No hay dos rutas en *rutas* con el mismo número de id.
+  * No hay dos viajes en *viajes* con el mismo número de viaje.
+  * No hay dos pasajes vendidos en *pasajes* con el mismo nombre de cliente.
+  * No hay dos pasajes vendidos en *pasajes* que contengan el mismo número
+    de viaje pero distinto número de ruta.
+*/
+  field rutas      // [Ruta]
+  field viajes     // [ViajeEnBus]
+  field pasajes    // [PasajeVendido]
+}
+
+type Ruta is record {
+/*
+  PROPÓSITO: Modela una ruta.
+  INV.REP:
+  * *origen* y *destino* son
+    diferentes y no son el string
+    vacío.
+  * *rutaId* es mayor a cero.
+*/
+  field rutaId  // Número
+  field origen  // String
+  field destino // String
+}
+
+type ViajeEnBus is record {
+/*
+  PROPÓSITO: Modela un viaje en bus.
+  INV.REP:
+  * *capacidad*, *númeroDeViaje* y
+    *horaDeSalida* son todos mayores a
+    cero.
+  * *horaDeLlegada* es mayor a
+    *horaDeSalida*.
+*/
+  field númeroDeViaje  // Número
+  field horaDeSalida   // Número
+  field horaDeLlegada  // Número
+  field tipoDeVehículo // TipoDeBus
+  field capacidad      // Número
+}
+
+type PasajeVendido is record {
+/*
+  PROPÓSITO: Modela un pasaje vendido
+    a un pasajero.
+  INV.REP:
+  * *nombrePasajero* no es el string
+    vacío.
+  * *rutaARealizar* y *viajeAsignado*
+    son ambos mayores a cero.
+*/
+  field nombrePasajero // String
+  field rutaARealizar  // Número
+  field viajeAsignado  // Número
+}
+
+type TipoDeBus is variant {
+/*
+  PROPÓSITO: Modela los distintos tipos
+  de buses.
+*/
+  case Simple    {}
+  case DoblePiso {}
+  case Pullman   {}
 }
 
 procedure Mover_VecesAl_(cantidadAMover, direccionAMover)
 {
     repeat (cantidadAMover) { Mover(direccionAMover)}
 }
+
+procedure PonerUnaDeCada()
+{
+    Poner(Rojo) Poner(Verde) Poner(Azul) Poner(Negro)
+}
+
+procedure Poner_DeColor_(cantidadAPoner, colorAPoner)
+{
+    repeat(cantidadAPoner) { Poner(colorAPoner)}
+}
+
+procedure Sacar_DeColor_(cantidadASacar, colorASacar)
+{
+    repeat (cantidadASacar) { Sacar(colorASacar) }
+}
+
+procedure VaciarCelda(){
+    SacarTodasDeColor_(Rojo)
+    SacarTodasDeColor_(Negro)
+    SacarTodasDeColor_(Verde)
+    SacarTodasDeColor_(Azul)
+}
+
+
+
+procedure SacarTodasDeColor_(color)
+{
+    repeat (nroBolitas(color))
+    {
+        Sacar(color)
+    }
+}
+
+function viajesDeDoblePisoSobrevendidosEn_(empresaDeBuses){
+    /*
+        PROPOSITO: describe la lista con los números de viajes 
+            que son en vehículos de doble piso y que han sido 
+            sobrevendidos.
+        PARAMETROS: 
+            - empresaDeBuses: EmpresaDeBuses
+        PRECONDICIONES:
+            - No tiene
+        TIPO: [Número]
+        OBSERVACIONES: Estrategia de filtro
+    */
+    
+    viajesSobrevendidos := []
+    
+    foreach viaje in viajes(empresaDeBuses){
+        viajesSobrevendidos:= viajesSobrevendidos ++ 
+            singular_Si_(númeroDeViaje(viaje), esUnViaje_ConBusDeDoblePisoYEstaSobrevendidoEn_(viaje,empresaDeBuses) )
+    }
+    return (viajesSobrevendidos)
+}
+
+function esUnViaje_ConBusDeDoblePisoYEstaSobrevendidoEn_(viaje, empresa){
+    /*
+        PROPOSITO: indica si el viaje dado es doble y esta sobrevendido
+        PARAMETROS: 
+            - viaje: ViajeEnBus
+            - empresa: EmpresaDeBuses
+        PRECONDICIONES:
+            - No tiene
+        TIPO: Booleano
+    */
+    
+    return( TipoDeBus(viaje) == DoblePiso && longitudDe_(pasajesVendidosEnViaje_En_(viaje, empresa)) > capacidad(viaje))
+    
+}
+
+function cantidadDePasajesVendidosEnViaje_En_(viaje, empresa){
+    /*
+        PROPOSITO: describe la cantidad de pasajes vendidos que 
+            tiene el viaje dado en la empresa dada
+        PARAMETROS: 
+            - viaje: ViajeEnBus
+            - empresa: EmpresaDeBuses
+        PRECONDICIONES:
+            - No tiene
+        TIPO: Número
+        OBSERVACIONES: recorrido de acumulación
+    */
+    
+    cantidadDePasajesVendidosHastaAhora:= 0
+    foreach pasaje in pasajes(empresa){
+        cantidadDePasajesVendidosHastaAhora:= cantidadDePasajesVendidosHastaAhora +
+            unoSi_CeroSino(númeroDeViaje(viaje) == viajeAsignado(pasaje))
+    }
+    return(cantidadDePasajesVendidosHastaAhora)
+}
+
+function pasajesVendidosEnViaje_En_(viaje, empresa){
+    pasajesVistosHastaAhora:= []
+    foreach pasaje in pasajes(empresa){
+        pasajesVistosHastaAhora:= pasajesVistosHastaAhora ++
+            singular_Si_(pasaje, númeroDeViaje(viaje) == viajeAsignado(pasaje))
+    }
+    return(pasajesVistosHastaAhora)
+}
+
+function destinoDelPasajeroLlamado_En_(nombreDePasajero, empresa){
+    /*
+        PROPOSITO: describe el destino que tiene el pasaje vendido a ese 
+            pasajero en la empresa. Si no tiene, devuelve “PASAJERO INVÁLIDO”.
+        PARAMETROS: 
+            - nombreDePasajero: String
+            - empresa: EmpresaDeBuses
+        PRECONDICIONES:
+            - No tiene
+        TIPO: String
+    */  
+    
+    return(
+        choose  destinoDelPasaje_En_(pasajeDePasajeroLlamado_En_(nombreDePasajero,empresa),empresa) when (hayPasajeConPasajero_En_(nombreDePasajero,empresa))
+                "PASAJERO INVALIDO" otherwise
+        )
+}
+
+function hayPasajeConPasajero_En_(nombreDePasajero,empresa){
+    /*
+        PROPOSITO: indicando si hay un pasaje con el nombre de pasajero dado en la empresa.
+        PARAMETROS: 
+            - nombreDePasajero: String
+            - empresa: EmpresaDeBuses
+        PRECONDICIONES:
+            - No tiene
+        TIPO: Booleano
+        OBSERVACIONES: recorrido de búsqueda.
+    */      
+    pasajesARecorrer:= pasajes(empresa)
+    while(not esVacía(pasajesARecorrer) && nombreDePasajero =/ nombrePasajero(primero(pasajesARecorrer)){
+        pasajesARecorrer := resto(pasajesARecorrer)
+    }
+    return(not esVacía(pasajesARecorrer))
+}
+
+function destinoDelPasaje_En_(pasaje, empresa){
+    /*
+        PROPOSITO: describe el destino del pasaje dado en la empresa dada.
+        PARAMETROS: 
+            - pasaje: PasajeVendido
+            - empresa: EmpresaDeBuses
+        PRECONDICIONES:
+            - El pasaje corresponde a la empresa dada.
+        TIPO: String
+        OBSERVACIONES: recorrido de búsqueda.
+    */
+    rutasARecorrer := rutas(empresa)
+    while(rutaARealizar(pasaje) /= rutaId(primero(rutasARecorrer))){
+        rutasARecorrer:= resto(rutasARecorrer)
+    }
+    return(destino(primero(rutasARecorrer)))
+    
+}
+
+
+"cajon de ginebra grande" "cajon de ginebra chico"
+
+function empresaConRutasExtendidasDesde_Hasta_En_(destinoAExtender, nuevoDestino, empresa){
+    /*
+        PROPOSITO: describe la empresa donde todas las rutas que tenían por destino 
+            'destinoAExtender' cambidos a nuevoDestino. 
+        PARAMETROS: 
+            - destinoAExtender: String
+            - nuevoDestino: String
+            - empresa: EmpresaDeBuses
+        PRECONDICIONES:
+            - El nuevoDestino no debe ser un string vacío
+        TIPO: EmpresaDeBuses
+    */    
+    
+    return(
+        Empresa( empresa |
+                rutas <- rutas_EstendidasDesde_Hasta_(rutas(empresa),destinoAExtender, nuevoDestino)
+            )
+        )
+}
+
+function rutas_EstendidasDesde_Hasta_(rutas, destinoAExtender, nuevoDestino){
+    /*
+        PROPOSITO: describe las rutas extendidas si corresponde con el 'destinoAExtender'
+            hasta su 'nuevoDestino'
+        PARAMETROS: 
+            - rutas: [Ruta]
+            - destinoAExtender: String
+            - nuevoDestino: String
+        PRECONDICIONES:
+            - El nuevoDestino no debe ser un string vacío
+        TIPO: [Ruta]
+        OBSERVACIONES: Recorrido de transformación
+    */
+    rutasActualizadas := []
+    foreach ruta in rutas{
+        rutasActualizadas := rutasActualizadas ++ ruta_ActualidaCon_SiLLegaA_(ruta,nuevoDestino, destinoAExtender)
+    }
+    return(rutasActualizadas)
+
+}
+
+function ruta_ActualidaCon_SiLLegaA_(ruta, nuevoDestino, destinoACambiar){
+    choose  Ruta(ruta | destino <- nuevoDestino) when (destino(ruta) == destinoACambiar && origen(ruta) /= nuevoDestino)
+            ruta otherwise
+}
+
