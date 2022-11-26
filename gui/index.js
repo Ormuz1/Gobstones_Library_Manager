@@ -1,5 +1,6 @@
-let types = [], functions = [], procedures = [], todos = [];
+let types = [], functions = [], procedures = [], all_entries = [];
 let vue_app;
+
 
 async function refresh_library()
 {
@@ -7,20 +8,26 @@ async function refresh_library()
     types.splice(0, types.length, ...library.types);
     functions.splice(0, functions.length, ...library.functions);
     procedures.splice(0, procedures.length, ...library.procedures);
-    const todos = document.getElementById("todos");
-    todos.innerHTML = "";
-    for (child of document.querySelectorAll(".nombre-elemento"))
-    {
-        todos.appendChild(child.cloneNode(true));
+    vue_app.$nextTick( () => {
+        const all_entries_html_element = document.getElementById("todos");
+        all_entries_html_element.innerHTML = "";
+        for (child of document.querySelectorAll(".library-entry-name"))
+        {
+            all_entries_html_element.appendChild(child.cloneNode(true));
+        }
     }
+    )
 }
+
 
 async function add_file_to_library()
 {
     await eel.select_and_add_file_to_library()()
+    console.log("finished");
     vue_app.hasLibraryChanged = true;
     await refresh_library()
 }
+
 
 async function export_library_to_gbs()
 {
@@ -35,29 +42,27 @@ async function save_library_changes()
 
 async function show_library_entry(element_entry_node)
 {
-    const contenedor_codigo = document.getElementById("codigo");
-    const codigo = await eel.get_library_element(element_entry_node.innerText.split(" ")[1])();
-    contenedor_codigo.innerText = codigo;
+    const code_html_element = document.getElementById("library-entry-code");
+    const code = await eel.get_library_element(element_entry_node.innerText.split(" ")[1])();
+    code_html_element.innerText = code;
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
     /*
     TODO: 
-        1. Translate spanish into english.
-        2. Convert "nombre-elemento" into a Vue component.
+        2. Convert "library-entry-name" into a Vue component.
         3. Wait until page is fully loaded before showing.
-        */
-   await refresh_library()
-   libraryElementSelectedEvent = new Event("LibraryElementSelected");
+    */
    vue_app = new Vue({
-       el: '#contenedor-principal',
+       el: '#main-container',
        data: {
            types: types,
            functions: functions,
            procedures: procedures,
-           todos: todos,
            hasLibraryChanged: false
         }
     });
+   await refresh_library()
+   libraryElementSelectedEvent = new Event("LibraryElementSelected");
     M.AutoInit();
 });

@@ -10,6 +10,7 @@ DEFAULT_LIBRARY_FILE_PATH = "biblioteca.json"
 
 class GobstonesLibrary:
     def __init__(self, filepath=DEFAULT_LIBRARY_FILE_PATH):
+        success = False
         try:
             with open(filepath, "r") as file:
                 library = json.loads(file.read())
@@ -18,22 +19,31 @@ class GobstonesLibrary:
             self.types = library["types"]
             self.procedures = library["procedures"]
             self.functions = library["functions"]
+            success = True
 
         except ValueError as e:
-            raise ValueError("Error: Invalid JSON code in library file.")
+            print("Invalid JSON code in library file.")
 
         except FileNotFoundError as e:
-            print("Couldn't find library file. Recreating library...")
-            lib = {
-                "types": {},
-                "procedures": {},
-                "functions": {}
-            }
-            with open(filepath, "w") as file:
-                json.dump(lib, file)
-            self.__init__(filepath)
+            print("Couldn't find library file in given path.")
+        
+        except InvalidLibraryError as e:
+            print(str(e))
+        
+        finally:
+            if not success:
+                print("Recreating library...")
+                self.__create_empty_library(filepath)
+                self.__init__()
 
-
+    def __create_empty_library(self, filepath):
+        lib = {
+            "types": {},
+            "procedures": {},
+            "functions": {}
+        }
+        with open(filepath, "w") as file:
+            json.dump(lib, file)
 
     def add_from_file(self, filepath: str):
         """Adds all the types, functions and procedures from a .gbs file to the library
@@ -87,13 +97,21 @@ class GobstonesLibrary:
         Args:
             filepath (str, optional): The path in which to save the .json file. 
                 Defaults to DEFAULT_LIBRARY_FILE_PATH.
+        
+        TODO: Validate filepath.
         """
         library_contents = self.to_dict()
         with open(filepath, "w") as library_file:
             library_file.write(json.dumps(library_contents, indent=4))
-        return
     
     def export_to_gbs(self, filepath:str="Biblioteca.gbs"):
+        """Exports the library to a GobStones .gbs file.
+
+        Args:
+            filepath (str, optional): The path for the file. Defaults to "Biblioteca.gbs".
+
+        TODO: Validate filepath.
+        """
         with open(filepath, "w", encoding='utf-8') as file:
             for blocktype in GobstonesLibrary.__blocktypes():
                 for element in getattr(self, blocktype).values():
@@ -149,7 +167,7 @@ class GobstonesLibrary:
 
     
 def parse_gobstones_file(filepath: str) -> dict:
-    """Parses the given .gbs file into a dictionary
+    """Parses the given .gbs file into a dictionary containing its types, functions and procedures.
 
     Args:
         filepath (str): The path to the .gbs file.

@@ -30,22 +30,22 @@ main > :last-child {
 }
 
 
-#contenedor-nombres-elementos{
+#entry-name-container{
     padding: 0;
 }
 
 
-#contenedor-codigo {
+#code-container {
     padding-right: 0;
 }
 
-#contenedor-principal {
+#main-container {
     padding: 1rem 0;
     width: 100%;
     height: 100%;
 }
 
-.collection, #codigo {
+.collection, #library-entry-code {
     height: 70vh;
     width: auto;
     overflow-y: auto;

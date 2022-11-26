@@ -17,7 +17,7 @@
 </head>
 
 <body class="valign-wrapper">
-    <div class="z-depth-4" id="contenedor-principal">
+    <div id="main-container">
         <h3 class="center-align blue-text">Administrador de biblioteca de Gobstones</h3>
         <main>
             <div class="row" id="fila-encabezados">
@@ -29,7 +29,7 @@
                 </header>
             </div>
             <div class="row" id="second-row">
-                <div class="col s4" id="contenedor-nombres-elementos">
+                <div class="col s4" id="entry-name-container">
                     <ul class="tabs" id="element-type-tabs">
                         <li class="tab col s3 active"><a href="#todos">Todos</a></li>
                         <li class="tab col s3"><a href="#types">Types</a></li>
@@ -40,26 +40,26 @@
                         
                     </ul>
                     <ul class="collection library-element-selector" id="types">
-                        <a onclick="show_library_entry(this)" class="collection-item nombre-elemento" v-for="i in types">
+                        <a onclick="show_library_entry(this)" class="collection-item library-entry-name" v-for="i in types">
                             Type {{i}}
                         </a>
 
                     </ul>
                     <ul class="collection library-element-selector" id="procedures">
-                        <a onclick="show_library_entry(this)" class="collection-item nombre-elemento" v-for="i in procedures">
+                        <a onclick="show_library_entry(this)" class="collection-item library-entry-name" v-for="i in procedures">
                             Procedure {{i}}
                         </a>
 
                     </ul>
                     <ul class="collection library-element-selector" id="functions">
-                        <a onclick="show_library_entry(this)" class="collection-item nombre-elemento" v-for="i in functions">
+                        <a onclick="show_library_entry(this)" class="collection-item library-entry-name" v-for="i in functions">
                             Function {{i}}
                         </a>
 
                     </ul>
                 </div>
-                <div class="col s8" id="contenedor-codigo">
-                    <pre id="codigo">Aca va el codigo</pre>
+                <div class="col s8" id="code-container">
+                    <pre id="library-entry-code">Aca va el codigo</pre>
                 </div>
             </div>
         </main>
