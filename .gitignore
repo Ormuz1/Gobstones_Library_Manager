@@ -3,3 +3,4 @@ build
 __pycache__
 biblioteca.json
 *.spec
+build.bat

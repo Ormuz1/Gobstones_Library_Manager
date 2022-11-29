@@ -39,6 +39,5 @@ def select_and_save_library_to_file():
     library_buffer.export_to_gbs(path)
     window.destroy()
 
-
 eel.init('gui')
 eel.start('index.html')

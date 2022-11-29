@@ -5,6 +5,7 @@
 """
 from re import split as re_split, search as re_search
 import json
+import tkinter as tk
 DEFAULT_LIBRARY_FILE_PATH = "biblioteca.json"
 
 
@@ -34,7 +35,7 @@ class GobstonesLibrary:
             if not success:
                 print("Recreating library...")
                 self.__create_empty_library(filepath)
-                self.__init__()
+                self.__init__(filepath)
 
     def __create_empty_library(self, filepath):
         lib = {
@@ -51,14 +52,39 @@ class GobstonesLibrary:
         Args:
             filepath (str): The path to the .gbs file.
         """
+        # TODO: Reformat this shit.
+        backup = self.to_dict()
+        file_choice_window = DuplicateEntryChoiceDialog()
         parsed_file = parse_gobstones_file(filepath)
-
-        for blocktype in parsed_file:
-            for blockname in parsed_file[blocktype]:
-                if self.is_element_in_library(blockname):
-                    print(f"{blockname} already exists in the library. Skipping over...")
-                    continue
-                getattr(self, blocktype)[blockname] = parsed_file[blocktype][blockname]
+        elements_to_add = []
+        for entry_type in parsed_file:
+            for entry in parsed_file[entry_type]:
+                if self.is_element_in_library(entry):
+                    choice = file_choice_window.handleDuplicate(getattr(self, entry_type)[entry], parsed_file[entry_type][entry])
+                    if choice == "Cancel":
+                        self.types = backup["types"]
+                        self.procedures = backup["procedures"]
+                        self.functions = backup["functions"]
+                        return
+                    elif choice == "Keep original":
+                        continue
+                    elif choice == "Keep both":
+                        new_entry_name = self.auto_rename_entry(entry)
+                        while self.is_element_in_library(new_entry_name):
+                            new_entry_name = self.auto_rename_entry(new_entry_name)
+                        
+                        new_entry_data = parsed_file[entry_type][entry]
+                        entry_name_start = new_entry_data.index(" ")
+                        entry_name_end = new_entry_data.index("(")
+                        new_entry_data = new_entry_data[:entry_name_start] + f" {new_entry_name}" + new_entry_data[entry_name_end:]
+                        getattr(self, entry_type)[new_entry_name] = new_entry_data
+                        continue
+                getattr(self, entry_type)[entry] = parsed_file[entry_type][entry]
+        
+        self.types = backup["types"]
+        self.procedures = backup["procedures"]
+        self.functions = backup["functions"]
+        file_choice_window.destroy()
 
 
     def remove(self, element_to_remove: str):
@@ -155,7 +181,19 @@ class GobstonesLibrary:
             for entry in getattr(self, blocktype):
                 if entry == element_name:
                     return getattr(self, blocktype)[entry]
-
+    def auto_rename_entry(self, entry):
+        new_entry_name = entry
+        
+        try: 
+            if new_entry_name[-2] != "_":
+                raise Exception
+            entry_number = int(entry[-1])
+            new_entry_name = entry[:-1] + str(entry_number + 1)
+        except Exception as e:
+            if new_entry_name[-1] != "_":
+                new_entry_name += "_"
+            new_entry_name += "1"
+        return new_entry_name
     @staticmethod
     def __blocktypes() -> tuple:
         """Returns the Gobstones blocktypes supported by the GobstonesLibrary class.
@@ -216,3 +254,39 @@ class InvalidLibraryError(Exception):
 
     def __str__(self):
         return f'The Gobstones library found at {self.library_file} was invalid.'
+
+class DuplicateEntryChoiceDialog(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.geometry("500x300")
+        tk.Label(self, text="The following entry that you are trying to add:").pack(fill="x")
+        self.newEntryText = tk.Text(self, height=5)
+        self.newEntryText.pack()
+        tk.Label(self, text="Has the same name as the following existing entry:").pack(fill="x")
+        self.originalEntryText = tk.Text(self, height=5)
+        self.originalEntryText.pack()
+        buttonFrame = tk.Frame(self)
+        buttonFrame.pack(pady=16)
+        tk.Button(buttonFrame, text="Keep original", command=lambda: self.__makeChoice("Keep original")).grid(padx=6)
+        tk.Button(buttonFrame, text="Keep new", command=lambda: self.__makeChoice("Keep new")).grid(padx=6, row=0, column=1)
+        tk.Button(buttonFrame, text="Keep both", command=lambda: self.__makeChoice("Keep both")).grid(padx=6, row=0, column=2)
+        tk.Button(buttonFrame, text="Cancel", command=lambda: self.__makeChoice("Cancel")).grid(padx=6, row=0, column=3)
+        self.withdraw()
+
+    def handleDuplicate(self, originalEntry, newEntry):
+        self.newEntryText.config(state=tk.NORMAL)
+        self.originalEntryText.config(state=tk.NORMAL)
+        self.newEntryText.insert(tk.INSERT, newEntry)
+        self.originalEntryText.insert(tk.INSERT, originalEntry)
+        self.newEntryText.config(state=tk.DISABLED)
+        self.originalEntryText.config(state=tk.DISABLED)
+        self.choice = None
+        self.deiconify()
+        while (self.choice is None):
+            self.update()
+            self.update_idletasks()
+        self.withdraw()
+        return self.choice
+
+    def __makeChoice(self, choice):
+        self.choice = choice

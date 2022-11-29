@@ -46,7 +46,7 @@ main > :last-child {
 }
 
 .collection, #library-entry-code {
-    height: 70vh;
+    height: 55vh;
     width: auto;
     overflow-y: auto;
 }
