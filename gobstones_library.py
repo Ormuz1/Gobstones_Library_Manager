@@ -2,6 +2,7 @@
     TODO:
     1. Implementar correctamente is_valid().
     2. Hacer el codigo mas defensivo.
+    3. Reformatear add_from_file pq es terrible spaghetti
 """
 from re import split as re_split, search as re_search
 import json
@@ -46,17 +47,19 @@ class GobstonesLibrary:
         with open(filepath, "w") as file:
             json.dump(lib, file)
 
-    def add_from_file(self, filepath: str):
+    def add_from_file(self, filepath: str) -> bool:
         """Adds all the types, functions and procedures from a .gbs file to the library
 
         Args:
             filepath (str): The path to the .gbs file.
+        Returns:
+            bool: A bool describing changes were made to the library.
         """
         # TODO: Reformat this shit.
         backup = self.to_dict()
         file_choice_window = DuplicateEntryChoiceDialog()
         parsed_file = parse_gobstones_file(filepath)
-        elements_to_add = []
+        were_changes_made = False
         for entry_type in parsed_file:
             for entry in parsed_file[entry_type]:
                 if self.is_element_in_library(entry):
@@ -65,7 +68,8 @@ class GobstonesLibrary:
                         self.types = backup["types"]
                         self.procedures = backup["procedures"]
                         self.functions = backup["functions"]
-                        return
+                        file_choice_window.destroy()
+                        return False
                     elif choice == "Keep original":
                         continue
                     elif choice == "Keep both":
@@ -80,11 +84,13 @@ class GobstonesLibrary:
                         getattr(self, entry_type)[new_entry_name] = new_entry_data
                         continue
                 getattr(self, entry_type)[entry] = parsed_file[entry_type][entry]
+                were_changes_made = True
         
         self.types = backup["types"]
         self.procedures = backup["procedures"]
         self.functions = backup["functions"]
         file_choice_window.destroy()
+        return were_changes_made
 
 
     def remove(self, element_to_remove: str):
@@ -276,6 +282,8 @@ class DuplicateEntryChoiceDialog(tk.Tk):
     def handleDuplicate(self, originalEntry, newEntry):
         self.newEntryText.config(state=tk.NORMAL)
         self.originalEntryText.config(state=tk.NORMAL)
+        self.newEntryText.delete("1.0", "end")
+        self.originalEntryText.delete("1.0", "end")
         self.newEntryText.insert(tk.INSERT, newEntry)
         self.originalEntryText.insert(tk.INSERT, originalEntry)
         self.newEntryText.config(state=tk.DISABLED)

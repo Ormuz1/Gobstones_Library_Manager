@@ -23,9 +23,11 @@ def select_and_add_file_to_library():
     window = tk.Tk()
     window.attributes('-topmost', True, '-alpha',0)
     files = filedialog.askopenfilenames(filetypes=[('gbs files', "*.gbs")], multiple=True)
+    were_changes_made = False
     for file in files:
-        library_buffer.add_from_file(file)
+        were_changes_made = were_changes_made or library_buffer.add_from_file(file)
     window.destroy()
+    return were_changes_made
 
 @eel.expose
 def save_changes():
@@ -34,7 +36,7 @@ def save_changes():
 @eel.expose
 def select_and_save_library_to_file():
     window = tk.Tk()
-    window.attributes('-topmost', True, '-alpha',0)
+    window.attributes('-topmost', True, '-alpha', 0)
     path = filedialog.asksaveasfilename(filetypes=[("GBS file", ".gbs")], defaultextension=".gbs")
     library_buffer.export_to_gbs(path)
     window.destroy()

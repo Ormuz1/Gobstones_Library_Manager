@@ -22,10 +22,8 @@ async function refresh_library()
 
 async function add_file_to_library()
 {
-    await eel.select_and_add_file_to_library()()
-    console.log("finished");
-    vue_app.hasLibraryChanged = true;
-    await refresh_library()
+    vue_app.hasLibraryChanged =  await eel.select_and_add_file_to_library()() || vue_app.hasLibraryChanged;
+    await refresh_library();
 }
 
 
@@ -53,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         2. Convert "library-entry-name" into a Vue component.
         3. Wait until page is fully loaded before showing.
     */
-   vue_app = new Vue({
+    vue_app = new Vue({
        el: '#main-container',
        data: {
            types: types,
@@ -62,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
            hasLibraryChanged: false
         }
     });
-   await refresh_library()
-   libraryElementSelectedEvent = new Event("LibraryElementSelected");
     M.AutoInit();
+    await refresh_library()
+    libraryElementSelectedEvent = new Event("LibraryElementSelected");
 });
