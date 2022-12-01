@@ -16,7 +16,7 @@ class GobstonesLibrary:
         try:
             with open(filepath, "r") as file:
                 library = json.loads(file.read())
-            if not self.is_valid():
+            if not self.__isValid():
                 raise InvalidLibraryError
             self.types = library["types"]
             self.procedures = library["procedures"]
@@ -28,17 +28,18 @@ class GobstonesLibrary:
 
         except FileNotFoundError as e:
             print("Couldn't find library file in given path.")
-        
+
         except InvalidLibraryError as e:
             print(str(e))
-        
+
         finally:
+            # If there was any exception, recreate the library from scratch.
             if not success:
                 print("Recreating library...")
-                self.__create_empty_library(filepath)
+                self.__createEmptyLibrary(filepath)
                 self.__init__(filepath)
 
-    def __create_empty_library(self, filepath):
+    def __createEmptyLibrary(self, filepath):
         lib = {
             "types": {},
             "procedures": {},
@@ -47,8 +48,8 @@ class GobstonesLibrary:
         with open(filepath, "w") as file:
             json.dump(lib, file)
 
-    def add_from_file(self, filepath: str) -> bool:
-        """Adds all the types, functions and procedures from a .gbs file to the library
+    def importFileToLibrary(self, filepath: str) -> bool:
+        """Adds all the types, functions and procedures from a .gbs file to the library.
 
         Args:
             filepath (str): The path to the .gbs file.
@@ -62,8 +63,9 @@ class GobstonesLibrary:
         were_changes_made = False
         for entry_type in parsed_file:
             for entry in parsed_file[entry_type]:
-                if self.is_element_in_library(entry):
-                    choice = file_choice_window.handleDuplicate(getattr(self, entry_type)[entry], parsed_file[entry_type][entry])
+                if self.isEntryInLibrary(entry):
+                    choice = file_choice_window.handleDuplicate(
+                        getattr(self, entry_type)[entry], parsed_file[entry_type][entry])
                     if choice == "Cancel":
                         self.types = backup["types"]
                         self.procedures = backup["procedures"]
@@ -73,70 +75,73 @@ class GobstonesLibrary:
                     elif choice == "Keep original":
                         continue
                     elif choice == "Keep both":
-                        new_entry_name = self.auto_rename_entry(entry)
-                        while self.is_element_in_library(new_entry_name):
-                            new_entry_name = self.auto_rename_entry(new_entry_name)
-                        
+                        new_entry_name = auto_rename_entry(entry)
+                        while self.isEntryInLibrary(new_entry_name):
+                            new_entry_name = auto_rename_entry(
+                                new_entry_name)
+
                         new_entry_data = parsed_file[entry_type][entry]
                         entry_name_start = new_entry_data.index(" ")
                         entry_name_end = new_entry_data.index("(")
-                        new_entry_data = new_entry_data[:entry_name_start] + f" {new_entry_name}" + new_entry_data[entry_name_end:]
-                        getattr(self, entry_type)[new_entry_name] = new_entry_data
+                        new_entry_data = new_entry_data[:entry_name_start] + \
+                            f" {new_entry_name}" + \
+                            new_entry_data[entry_name_end:]
+                        getattr(self, entry_type)[
+                            new_entry_name] = new_entry_data
                         continue
-                getattr(self, entry_type)[entry] = parsed_file[entry_type][entry]
+                getattr(self, entry_type)[
+                    entry] = parsed_file[entry_type][entry]
                 were_changes_made = True
-        
+
         self.types = backup["types"]
         self.procedures = backup["procedures"]
         self.functions = backup["functions"]
         file_choice_window.destroy()
         return were_changes_made
 
-
-    def remove(self, element_to_remove: str):
-        """Removes an element from the library.
-
-        Args:
-            element_to_remove (str): The name (key) of the element to be removed.
-        """
-        for blocktype in GobstonesLibrary.__blocktypes():
-            for element_name in getattr(self, blocktype):
-                if element_name == element_to_remove:
-                    getattr(self, blocktype).pop(element_name)
-                    return
-        print("The element to remove from the library was not found.")
-
-
-    def update(self, element_to_update: str, new_element_data: str):
-        """Updates an element from the library-
+    def removeEntry(self, entry_to_remove: str):
+        """Removes an entry from the library.
 
         Args:
-            element_to_update (str): The name (key) of the element to update.
-            new_element_data (str): The codeblock (value) to update.
+            entry_to_remove (str): The name (key) of the entry to be removed.
         """
         for blocktype in GobstonesLibrary.__blocktypes():
-            for element_name in getattr(self, blocktype):
-                if element_name == element_to_update:
-                    getattr(self, blocktype)[element_to_update] = new_element_data
+            for entry_name in getattr(self, blocktype):
+                if entry_name == entry_to_remove:
+                    getattr(self, blocktype).pop(entry_name)
                     return
-        print("The element to update from the library was not found.")
+        print("The entry to remove from the library was not found.")
+
+    def updateEntry(self, entry_to_update: str, new_entry_data: str):
+        """Updates an entry from the library-
+
+        Args:
+            entry_to_update (str): The name (key) of the entry to update.
+            new_entry_data (str): The codeblock (value) to update.
+        """
+        for blocktype in GobstonesLibrary.__blocktypes():
+            for entry_name in getattr(self, blocktype):
+                if entry_name == entry_to_update:
+                    getattr(self, blocktype)[
+                        entry_to_update] = new_entry_data
+                    return
+        print("The entry to update from the library was not found.")
         pass
 
-
-    def export_to_json(self, filepath:str=DEFAULT_LIBRARY_FILE_PATH):
+    def exportToJSON(self, filepath: str = DEFAULT_LIBRARY_FILE_PATH):
         """Exports the library object to a .json file.
 
         Args:
             filepath (str, optional): The path in which to save the .json file. 
                 Defaults to DEFAULT_LIBRARY_FILE_PATH.
-        
+
         TODO: Validate filepath.
         """
         library_contents = self.to_dict()
         with open(filepath, "w") as library_file:
             library_file.write(json.dumps(library_contents, indent=4))
-    
-    def export_to_gbs(self, filepath:str="Biblioteca.gbs"):
+
+    def exportToGbsFile(self, filepath: str = "Biblioteca.gbs"):
         """Exports the library to a GobStones .gbs file.
 
         Args:
@@ -146,10 +151,10 @@ class GobstonesLibrary:
         """
         with open(filepath, "w", encoding='utf-8') as file:
             for blocktype in GobstonesLibrary.__blocktypes():
-                for element in getattr(self, blocktype).values():
-                    file.write(element + "\n\n")
-        
-    def is_valid(self) -> bool:
+                for entry in getattr(self, blocktype).values():
+                    file.write(entry + "\n\n")
+
+    def __isValid(self) -> bool:
         """Returns whether this library is valid.
 
         Returns:
@@ -158,48 +163,34 @@ class GobstonesLibrary:
         # WIP
         return True
 
-
     def to_dict(self) -> dict:
         """Converts the library to a dictionary.
 
         Returns:
             dict: The library as a dictionary.
         """
-        return {blocktype:getattr(self, blocktype) for blocktype in GobstonesLibrary.__blocktypes()}
-    
-    
-    def is_element_in_library(self, element_name:str) -> bool:
-        """Returns whether the library contains the element of the given name.
+        return {blocktype: getattr(self, blocktype) for blocktype in GobstonesLibrary.__blocktypes()}
+
+    def isEntryInLibrary(self, entry_name: str) -> bool:
+        """Returns whether the library contains the entry of the given name.
 
         Args:
-            element_name (str): The name of the element to search.
+            entry_name (str): The name of the entry to search.
 
         Returns:
-            bool: A boolean describing whether the element is in the library.
+            bool: A boolean describing whether the entry is in the library.
         """
         for blocktype in GobstonesLibrary.__blocktypes():
-            if element_name in getattr(self, blocktype):
+            if entry_name in getattr(self, blocktype):
                 return True
         return False
-    
-    def get_element(self, element_name:str) -> str:
+
+    def getEntry(self, entry_name: str) -> str:
         for blocktype in GobstonesLibrary.__blocktypes():
             for entry in getattr(self, blocktype):
-                if entry == element_name:
+                if entry == entry_name:
                     return getattr(self, blocktype)[entry]
-    def auto_rename_entry(self, entry):
-        new_entry_name = entry
-        
-        try: 
-            if new_entry_name[-2] != "_":
-                raise Exception
-            entry_number = int(entry[-1])
-            new_entry_name = entry[:-1] + str(entry_number + 1)
-        except Exception as e:
-            if new_entry_name[-1] != "_":
-                new_entry_name += "_"
-            new_entry_name += "1"
-        return new_entry_name
+
     @staticmethod
     def __blocktypes() -> tuple:
         """Returns the Gobstones blocktypes supported by the GobstonesLibrary class.
@@ -209,7 +200,7 @@ class GobstonesLibrary:
         """
         return ("types", "procedures", "functions")
 
-    
+
 def parse_gobstones_file(filepath: str) -> dict:
     """Parses the given .gbs file into a dictionary containing its types, functions and procedures.
 
@@ -233,7 +224,7 @@ def parse_gobstones_file(filepath: str) -> dict:
     # The re.split() function adds a wrong item at the beginning which
     # fucks everything up, so we have to remove it
     data = data[1:]
-    
+
     for i in range(0, len(data), 2):
         token = data[i]
         # 'program' blocks must be skipped.
@@ -251,6 +242,19 @@ def parse_gobstones_file(filepath: str) -> dict:
 
     return parsed_data
 
+def auto_rename_entry(entry):
+    new_entry_name = entry
+
+    try:
+        if new_entry_name[-2] != "_":
+            raise Exception
+        entry_number = int(entry[-1])
+        new_entry_name = entry[:-1] + str(entry_number + 1)
+    except Exception as e:
+        if new_entry_name[-1] != "_":
+            new_entry_name += "_"
+        new_entry_name += "1"
+    return new_entry_name
 
 
 class InvalidLibraryError(Exception):
@@ -261,22 +265,29 @@ class InvalidLibraryError(Exception):
     def __str__(self):
         return f'The Gobstones library found at {self.library_file} was invalid.'
 
+
 class DuplicateEntryChoiceDialog(tk.Tk):
     def __init__(self):
         super().__init__()
         self.geometry("500x300")
-        tk.Label(self, text="The following entry that you are trying to add:").pack(fill="x")
+        tk.Label(self, text="The following entry that you are trying to add:").pack(
+            fill="x")
         self.newEntryText = tk.Text(self, height=5)
         self.newEntryText.pack()
-        tk.Label(self, text="Has the same name as the following existing entry:").pack(fill="x")
+        tk.Label(self, text="Has the same name as the following existing entry:").pack(
+            fill="x")
         self.originalEntryText = tk.Text(self, height=5)
         self.originalEntryText.pack()
         buttonFrame = tk.Frame(self)
         buttonFrame.pack(pady=16)
-        tk.Button(buttonFrame, text="Keep original", command=lambda: self.__makeChoice("Keep original")).grid(padx=6)
-        tk.Button(buttonFrame, text="Keep new", command=lambda: self.__makeChoice("Keep new")).grid(padx=6, row=0, column=1)
-        tk.Button(buttonFrame, text="Keep both", command=lambda: self.__makeChoice("Keep both")).grid(padx=6, row=0, column=2)
-        tk.Button(buttonFrame, text="Cancel", command=lambda: self.__makeChoice("Cancel")).grid(padx=6, row=0, column=3)
+        tk.Button(buttonFrame, text="Keep original",
+                  command=lambda: self.__makeChoice("Keep original")).grid(padx=6)
+        tk.Button(buttonFrame, text="Keep new", command=lambda: self.__makeChoice(
+            "Keep new")).grid(padx=6, row=0, column=1)
+        tk.Button(buttonFrame, text="Keep both", command=lambda: self.__makeChoice(
+            "Keep both")).grid(padx=6, row=0, column=2)
+        tk.Button(buttonFrame, text="Cancel", command=lambda: self.__makeChoice(
+            "Cancel")).grid(padx=6, row=0, column=3)
         self.withdraw()
 
     def handleDuplicate(self, originalEntry, newEntry):
