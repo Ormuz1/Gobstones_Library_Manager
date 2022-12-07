@@ -1,84 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
-    <link rel="stylesheet" href="style.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
     <!--Import Google Icon Font-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
     <title>GobStones Library Manager</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
 
-    
-</head>
-
-<body class="valign-wrapper">
+  <body class="valign-wrapper">
     <div id="main-container">
-        <h3 class="center-align blue-text">Administrador de biblioteca de Gobstones</h3>
-        <main>
-            <div class="row" id="fila-encabezados">
-                <header class="col s4">
-                    <h6 class="center-align">Elementos de la biblioteca</h6>
-                </header>
-                <header class="col s8">
-                    <h6 class="center-align">Codigo del elemento seleccionado</h6>
-                </header>
-            </div>
-            <div class="row" id="second-row">
-                <div class="col s4" id="entry-name-container">
-                    <ul class="tabs" id="element-type-tabs">
-                        <li class="tab col s3 active"><a href="#todos">Todos</a></li>
-                        <li class="tab col s3"><a href="#types">Types</a></li>
-                        <li class="tab col s3"><a href="#procedures">Procedures</a></li>
-                        <li class="tab col s3"><a href="#functions">Functions</a></li>
-                    </ul>
-                    <ul class="collection library-element-selector" id="todos">
-                        
-                    </ul>
-                    <ul class="collection library-element-selector" id="types">
-                        <a onclick="show_library_entry(this)" class="collection-item library-entry-name" v-for="i in types">
-                            Type {{i}}
-                        </a>
-
-                    </ul>
-                    <ul class="collection library-element-selector" id="procedures">
-                        <a onclick="show_library_entry(this)" class="collection-item library-entry-name" v-for="i in procedures">
-                            Procedure {{i}}
-                        </a>
-
-                    </ul>
-                    <ul class="collection library-element-selector" id="functions">
-                        <a onclick="show_library_entry(this)" class="collection-item library-entry-name" v-for="i in functions">
-                            Function {{i}}
-                        </a>
-
-                    </ul>
-                </div>
-                <div class="col s8" id="code-container">
-                    <pre id="library-entry-code">Aca va el codigo</pre>
-                </div>
-            </div>
-        </main>
-        <div class="alert card amber lighten-4 brown-text" v-show="hasLibraryChanged">
-            <div class="card-content">
-                <p><i class="material-icons">report_problem</i><span>Alerta:</span> Tienes cambios sin guardar a la biblioteca.</p>
-            </div>
+      <h3 class="center-align blue-text">
+        Administrador de biblioteca de Gobstones
+      </h3>
+      <main>
+        <div class="row" id="fila-encabezados">
+          <header class="col s4">
+            <h6 class="center-align">Elementos de la biblioteca</h6>
+          </header>
+          <header class="col s8">
+            <h6 class="center-align">Codigo del elemento seleccionado</h6>
+          </header>
         </div>
-        <div id="contenedor-botones">
-            <a class="waves-effect waves-light btn s3" onclick="add_file_to_library()">Añadir desde archivo</a>
-            <a class="waves-effect waves-light btn s3" onclick="export_library_to_gbs()">Exportar a .gbs</a>
-            <a class="waves-effect waves-light btn s3" onclick="save_library_changes()">Guardar cambios a biblioteca</a>
+        <div class="row" id="second-row">
+          <div class="col s4" id="entry-name-container">
+            <ul class="tabs" id="element-type-tabs">
+              <li class="tab col s3 active"><a href="#todos">Todos</a></li>
+              <li class="tab col s3"><a href="#types">Types</a></li>
+              <li class="tab col s3"><a href="#procedures">Procedures</a></li>
+              <li class="tab col s3"><a href="#functions">Functions</a></li>
+            </ul>
+            <ul class="collection library-element-selector" id="todos"></ul>
+            <ul class="collection library-element-selector" id="types">
+            </ul>
+            <ul class="collection library-element-selector" id="procedures">
+            </ul>
+            <ul class="collection library-element-selector" id="functions">
+            </ul>
+          </div>
+          <div class="col s8" id="code-container">
+            <pre id="library-entry-code">Aca va el codigo</pre>
+          </div>
         </div>
+      </main>
+      <div
+        class="alert card amber lighten-4 brown-text"
+        id="library-changed-alert"
+        style="display: none;"
+      >
+        <div class="card-content">
+          <p>
+            <i class="material-icons">report_problem</i
+            ><span>Alerta:</span> Tienes cambios sin guardar a la biblioteca.
+          </p>
+        </div>
+      </div>
+      <div id="contenedor-botones">
+        <a
+          class="waves-effect waves-light btn s3"
+          onclick="add_file_to_library()"
+          >Añadir desde archivo</a
+        >
+        <a
+          class="waves-effect waves-light btn s3"
+          onclick="export_library_to_gbs()"
+          >Exportar a .gbs</a
+        >
+        <a
+          class="waves-effect waves-light btn s3"
+          onclick="save_library_changes()"
+          >Guardar cambios a biblioteca</a
+        >
+      </div>
     </div>
-    
+
     <script type="text/javascript" src="/eel.js"></script>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="index.js"> </script>
-</body>
-
+    <script src="index.js"></script>
+  </body>
 </html>

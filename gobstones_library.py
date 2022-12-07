@@ -242,6 +242,7 @@ def parse_gobstones_file(filepath: str) -> dict:
 
     return parsed_data
 
+
 def auto_rename_entry(entry):
     new_entry_name = entry
 
