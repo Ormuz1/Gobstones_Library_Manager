@@ -39,6 +39,10 @@ def select_and_add_file_to_library():
 def save_changes():
     library_buffer.exportToJSON()
 
+@eel.expose
+def revert_changes():
+    global library_buffer
+    library_buffer = lib.GobstonesLibrary()
 
 @eel.expose
 def select_and_save_library_to_file():
@@ -49,6 +53,9 @@ def select_and_save_library_to_file():
     library_buffer.exportToGbsFile(path)
     window.destroy()
 
+@eel.expose
+def delete_library_entry(entry_name):
+    library_buffer.removeEntry(entry_name)
 
 eel.init('gui')
 eel.start('index.html')

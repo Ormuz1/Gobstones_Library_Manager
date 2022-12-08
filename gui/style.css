@@ -9,25 +9,12 @@ html {
   height: 100%;
 }
 
+.library-entry-name {
+  flex: 1;
+}
+
 input[type="file"] {
   display: none;
-}
-/* Borders */
-main > .row {
-  border: var(--thick-border);
-  border-bottom: 0;
-}
-
-main > :last-child {
-  border-bottom: var(--thick-border);
-}
-
-.row > .col {
-  border-right: var(--thick-border);
-}
-
-.row > :last-child {
-  border-right: none;
 }
 
 #entry-name-container {
@@ -76,7 +63,32 @@ main > :last-child {
 .library-elements-selector {
   margin: none;
 }
+.library-entry-wrapper {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  }
+/* Borders */
+main > .row {
+  border: var(--thick-border);
+  border-bottom: 0;
+}
 
+main > :last-child {
+  border-bottom: var(--thick-border);
+}
+
+.row > .col {
+  border-right: var(--thick-border);
+}
+
+.row > :last-child {
+  border-right: none;
+}
+
+.collection .collection-item
+{
+  border-bottom: none;
+}
 /* Materialize Tabs styles */
 .tabs {
   height: 24px;
