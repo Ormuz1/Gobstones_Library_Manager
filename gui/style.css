@@ -66,7 +66,7 @@ input[type="file"] {
 .library-entry-wrapper {
   display: flex;
   border-bottom: 1px solid #e0e0e0;
-  }
+}
 /* Borders */
 main > .row {
   border: var(--thick-border);
@@ -85,8 +85,7 @@ main > :last-child {
   border-right: none;
 }
 
-.collection .collection-item
-{
+.collection .collection-item {
   border-bottom: none;
 }
 /* Materialize Tabs styles */
